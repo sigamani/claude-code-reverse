@@ -1,0 +1,145 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  
+  // MCP Server Configuration
+  "mcp": {
+    "vapi": {
+      "command": ["npx", "-y", "@vapi-ai/mcp-docs-server"],
+      "description": "Vapi AI documentation server for API reference"
+    }
+  },
+
+  // Project-specific context files for understanding the codebase
+  "instructions": [
+    "README.md",
+    "config.py",
+    "api/main.py",
+    "pipeline/inference.py",
+    "docker/docker-compose.yml",
+    "vastai_deployment.py",
+    "vastai_cli.py"
+  ],
+
+  // Enabled tools for this ML/infrastructure project
+  "tools": {
+    "bash": true,
+    "read": true,
+    "write": true,
+    "edit": true,
+    "glob": true,
+    "grep": true,
+    "list": true,
+    "webfetch": true,
+    "websearch": true,
+    "codesearch": true
+  },
+
+  // Model configuration optimized for ML/infrastructure tasks
+  "model": "anthropic/claude-sonnet-4-5",
+  "small_model": "anthropic/claude-haiku-4-5",
+
+  // Specialized agents for this project type
+  "agent": {
+    "ml-infrastructure": {
+      "description": "Specialized agent for ML infrastructure and batch inference systems",
+      "model": "anthropic/claude-sonnet-4-5",
+      "prompt": "You are helping with a Python Ray/vLLM batch inference system. Focus on distributed computing, ML infrastructure, API design, and performance optimization. The project uses FastAPI, Ray Data for distributed processing, and vLLM for LLM inference.",
+      "tools": {
+        "bash": true,
+        "read": true,
+        "write": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "webfetch": true,
+        "websearch": true,
+        "codesearch": true
+      }
+    },
+    "vastai-deployment": {
+      "description": "Specialized agent for deploying and managing Ray batch inference on Vast.ai GPU instances",
+      "model": "anthropic/claude-sonnet-4-5",
+      "prompt": "You are a specialized DevOps agent for deploying Ray batch inference systems on Vast.ai GPU instances. Your expertise includes:\n\n**Vast.ai Instance Management:**\n- Provision RTX 4090/A6000/H100 GPU instances with optimal pricing\n- Handle SSH key setup, authentication, and security\n- Manage instance lifecycle (create, monitor, scale, destroy)\n- Extract connection details, IPs, and access credentials\n- Handle instance failures and automatic failover\n\n**Docker & Container Orchestration:**\n- Install Docker and Docker Compose on remote GPU instances\n- Deploy unified docker-compose.yml with Ray head/worker setup\n- Configure volume mounting, networking, and resource limits\n- Manage container lifecycle, health checks, and auto-restart\n- Handle GPU driver compatibility and CUDA runtime issues\n\n**Ray Cluster Operations:**\n- Deploy multi-node Ray clusters with proper networking\n- Configure GPU scheduling, resource allocation, and placement groups\n- Monitor cluster health, node status, and resource utilization\n- Debug Ray communication, object store, and GCS issues\n- Handle dynamic scaling and worker node management\n\n**Service & Ingress Management:**\n- Deploy FastAPI batch inference service with vLLM backend\n- Configure Traefik ingress, load balancing, and SSL termination\n- Set up monitoring, metrics collection (Prometheus), and logging\n- Manage service discovery, health checks, and circuit breakers\n\n**Debugging & Troubleshooting:**\n- Automatically detect and fix common deployment failures\n- Analyze logs, error patterns, and performance bottlenecks\n- Handle GPU driver issues, CUDA memory errors, and NCCL problems\n- Debug network connectivity between containers and instances\n- Fix Ray cluster communication and resource allocation issues\n\n**Configuration Management:**\n- Validate and optimize docker-compose.yml for target hardware\n- Manage environment variables, secrets, and API keys securely\n- Adapt configurations based on instance specs and GPU types\n- Handle version compatibility between Ray, vLLM, and CUDA\n\n**Key Commands & Tools:**\n- Vast.ai API: instance creation, monitoring, termination\n- SSH: remote execution, file transfer, tunnel setup\n- Docker: container management, networking, volume operations\n- Ray CLI: cluster status, resource monitoring, log collection\n- Network diagnostics: connectivity testing, port forwarding\n- Log analysis: error pattern detection, performance metrics\n\n**Available CLI Commands:**\n- `python vastai_cli.py deploy --gpu-type rtx4090 --workers 2 --duration 4`\n- `python vastai_cli.py status --deployment-id <id>`\n- `python vastai_cli.py debug --deployment-id <id>`\n- `python vastai_cli.py cleanup --deployment-id <id> --force`\n\nAlways validate prerequisites, use retry logic with exponential backoff, and provide clear error messages with actionable solutions. Focus on robust, automated deployment with minimal manual intervention.",
+      "tools": {
+        "bash": true,
+        "read": true,
+        "write": true,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "webfetch": true,
+        "websearch": true,
+        "codesearch": true
+      },
+      "env_vars": [
+        "VAST_AI_API_KEY",
+        "VAST_API_ENDPOINT",
+        "SSH_PRIVATE_KEY_PATH",
+        "DOCKER_REGISTRY_URL"
+      ]
+    }
+  },
+
+  // Development workflow settings
+  "command": {
+    "test": {
+      "template": "Run the full test suite with coverage report and show any failures.\nFocus on the failing tests and suggest fixes.",
+      "description": "Run tests with coverage",
+      "agent": "ml-infrastructure"
+    },
+    "lint": {
+      "template": "Run linting and formatting checks on the codebase using flake8 and black.",
+      "description": "Run linting and formatting",
+      "agent": "ml-infrastructure"
+    },
+    "setup": {
+      "template": "Set up the development environment for the Ray/vLLM batch inference system.\nCreate virtual environment, install dependencies, and verify setup.",
+      "description": "Set up development environment",
+      "agent": "ml-infrastructure"
+    },
+    "deploy-vastai": {
+      "template": "Deploy the Ray batch inference system to Vast.ai GPU instances.\n1. Provision 2x RTX 4090 instances with optimal pricing\n2. Setup Docker and Docker Compose on each instance\n3. Deploy Ray head and worker nodes with proper networking\n4. Configure Traefik ingress and monitoring\n5. Validate cluster health and service connectivity\n6. Provide access URLs and connection details\n\nUse: python vastai_cli.py deploy --gpu-type rtx4090 --workers 2 --duration 4",
+      "description": "Deploy to Vast.ai GPU instances",
+      "agent": "vastai-deployment"
+    },
+    "vastai-status": {
+      "template": "Check the status of Vast.ai deployment including:\n- Instance health and GPU utilization\n- Ray cluster status and node connectivity\n- Service health (API, dashboard, metrics)\n- Resource usage and performance metrics\n- Error logs and troubleshooting suggestions\n\nUse: python vastai_cli.py status",
+      "description": "Check Vast.ai deployment status",
+      "agent": "vastai-deployment"
+    },
+    "vastai-debug": {
+      "template": "Debug issues with Vast.ai deployment:\n1. Check instance connectivity and SSH access\n2. Analyze Docker container logs and status\n3. Verify Ray cluster communication and GCS health\n4. Test GPU availability and CUDA functionality\n5. Validate network connectivity between services\n6. Provide specific fixes for identified issues\n\nUse: python vastai_cli.py debug",
+      "description": "Debug Vast.ai deployment issues",
+      "agent": "vastai-deployment"
+    },
+    "vastai-cleanup": {
+      "template": "Clean up Vast.ai deployment:\n1. Stop all Docker containers gracefully\n2. Remove Ray cluster and shutdown nodes\n3. Terminate GPU instances to avoid charges\n4. Clean up volumes and temporary data\n5. Remove SSH keys and security configurations\n6. Verify cleanup completion and cost optimization\n\nUse: python vastai_cli.py cleanup --force",
+      "description": "Clean up Vast.ai deployment",
+      "agent": "vastai-deployment"
+    },
+    "vastai-scale": {
+      "template": "Scale Vast.ai deployment:\n1. Analyze current resource utilization and bottlenecks\n2. Provision additional GPU instances as needed\n3. Update Ray cluster configuration for new nodes\n4. Rebalance workloads across expanded cluster\n5. Validate scaling effectiveness and performance\n6. Optimize configuration for new cluster size\n\nUse: python vastai_cli.py deploy --workers <new_count>",
+      "description": "Scale Vast.ai deployment",
+      "agent": "vastai-deployment"
+    }
+  },
+
+  // Theme configuration
+  "theme": "opencode",
+
+  // Auto-update settings
+  "autoupdate": true,
+
+  // Sharing configuration
+  "share": "manual",
+
+  // Permissions for this project
+  "permission": {
+    "bash": "auto",
+    "read": "auto",
+    "write": "auto",
+    "edit": "auto"
+  }
+}

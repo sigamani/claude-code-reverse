@@ -1,0 +1,159 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (OpenAI-compatible)",
+      "options": {
+        "baseURL": "http://127.0.0.1:11434/v1",
+        "apiKey": "ollama"
+      },
+      "models": {
+        "qwen2.5-32b": { "name": "qwen2.5-coder-32b:latest", "model": "qwen2.5-coder-32b:latest", "stream": true },
+        "llama3-8b": { "name": "llama3:8b", "model": "llama3:8b", "stream": true },
+        "mistral": { "name": "mistral:latest", "model": "mistral:latest", "stream": true },
+        "qwen2.5-32b": { "name": "qwen2.5-coder-32b:latest", "model": "qwen2.5-coder-32b:latest", "stream": true }
+      }
+    },
+    "perplexity": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Perplexity",
+      "options": { "baseURL": "https://api.perplexity.ai", "apiKeyEnv": "PERPLEXITY_API_KEY" },
+      "models": {
+        "sonar-large": { "name": "sonar-large", "model": "llama-3.1-sonar-large-uncensored", "stream": true },
+        "sonar-small": { "name": "sonar-small", "model": "llama-3.1-sonar-small-uncensored", "stream": true }
+      }
+    },
+    "openai": {
+      "npm": "@ai-sdk/openai",
+      "name": "OpenAI",
+      "options": { "apiKeyEnv": "OPENAI_API_KEY" },
+      "models": {
+        "gpt-4o": { "name": "gpt-4o", "model": "gpt-4o", "stream": true },
+        "gpt-4o-mini": { "name": "gpt-4o-mini", "model": "gpt-4o-mini", "stream": true }
+      }
+    },
+    "opencode": {
+      "models": {
+        "qwen2.5-0.5b": { "id": "qwen2.5-0.5b" },
+        "mistral7b": { "id": "mistral7b" },
+        "big-pickle": {
+          "id": "big-pickle",
+          "ensemble": ["qwen2.5-32b", "qwen2.5-0.5b", "mistral7b"]
+        }
+      }
+    }
+  },
+
+  "mcp": {
+    "vastai": {
+      "type": "local",
+      "command": ["node", "/Users/michaelsigamani/.config/opencode/vastai-mcp-server/index.js"],
+      "enabled": true
+    },
+    "sonarqube": {
+      "type": "local",
+      "command": ["node", "/Users/michaelsigamani/.config/opencode/sonarcloud-mcp-server/index.js"],
+      "enabled": true
+    },
+    "perplexity_search": {
+      "type": "local",
+      "command": ["node", "/Users/michaelsigamani/.config/opencode/perplexity-mcp-server/index.js"],
+      "enabled": true
+    },
+    "gmail": {
+      "type": "local",
+      "command": ["node", "/Users/michaelsigamani/Documents/DevelopmentCode/2025-fall/job-leads/Gmail-MCP-Server/dist/index.js"],
+      "enabled": true
+    }
+  },
+
+  "tools": {
+    "bash": true,
+    "read": true,
+    "write": true,
+    "edit": true,
+    "glob": true,
+    "grep": true,
+    "list": true,
+    "webfetch": true,
+    "websearch": true,
+    "codesearch": true
+  },
+
+  "agent": {
+    "batch-inference": { "model": "big-pickle", "config_file": "agents/batch_inference_agent.json" },
+    "checking": {
+      "model": "big-pickle",
+      "config_file": "agents/checking_agent.json",
+      "tools": { "websearch": true, "read": true, "write": true, "edit": true },
+      "persistent_documents": [
+        "https://github.com/ray-project/kuberay",
+        "https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html",
+        "https://docs.ray.io/en/latest/data/batch_inference.html#batch-inference-home"
+      ]
+    },
+    "viking-build": { "config_file": "agents/viking_build_agent.json" },
+    "troels": { "config_file": "agents/troels_agent.json" },
+    "testing-symbiote": { "config_file": "agents/testing_symbiote_agent.json" },
+    "ai-developer": { "config_file": "agents/ai_developer_agent.json" },
+    "frontend-py": { "config_file": "agents/frontend_py_agent.json" },
+    "ses-kuberay-expert": { 
+      "model": "sonar-large", 
+      "config_file": "agent/ses_kuberay_expert_sonar_001.json",
+      "tools": { 
+        "websearch": true, 
+        "perplexity_search_perplexity_search": true,
+        "perplexity_search_perplexity_fetch_url": true,
+        "read": true, 
+        "write": true, 
+        "edit": true 
+      },
+      "persistent_documents": [
+        "https://github.com/ray-project/kuberay",
+        "https://docs.ray.io/en/latest/cluster/kubernetes/getting-started/kuberay.html",
+        "https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html",
+        "https://docs.ray.io/en/latest/data/batch_inference.html",
+        "https://kubernetes.io/docs/concepts/extend-kubernetes/operator/",
+        "https://volcano.sh/en/docs/",
+        "https://sigs.k8s.io/kueue/",
+        "https://anyscale.com/",
+        "https://www.kubeflow.org/",
+        "https://airflow.apache.org/docs/apache-airflow/stable/kubernetes.html"
+      ]
+    },
+    "kuberay-project-advisor": {
+      "model": "sonar-large",
+      "config_file": "agent/kuberay_project_advisor.json",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": true,
+        "websearch": true,
+        "perplexity_search_perplexity_search": true
+      }
+    }
+  },
+
+  "command": {
+    "batch-inference": {
+      "template": "Execute batch inference tasks with continuous validation using big-pickle ensemble.",
+      "agent": "batch-inference"
+    },
+    "lint": { "template": "Run flake8 and black on codebase.", "agent": "checking" },
+    "test": { "template": "Run pytest and ensure all tests pass immediately.", "agent": "checking" },
+    "kuberay-analysis": {
+      "template": "Analyze KubeRay vs alternatives for your specific use case with comprehensive tradeoff analysis.",
+      "agent": "ses-kuberay-expert"
+    },
+    "kuberay-project": {
+      "template": "Get project-specific KubeRay recommendations for Ray Data + vLLM batch inference system.",
+      "agent": "kuberay-project-advisor"
+    }
+  },
+
+  "autoupdate": true,
+  "share": "manual"
+}
+

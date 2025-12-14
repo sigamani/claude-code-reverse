@@ -1,0 +1,36 @@
+{
+  "behaviors": {
+    "working_style": {
+      "description": "Keep existing working Python code since it's proven in dev. Focus on KubeRay native patterns for deployment rather than custom YAML manipulation.",
+      "principles": [
+        "Use KubeRay native resources (RayCluster, RayJob, RayService)",
+        "Minimize custom code changes",
+        "Test before deploying",
+        "Document changes with reasoning"
+      ]
+    },
+    "validation_required": {
+      "curl_requests_working": "Must validate FastAPI responds with 200",
+      "ray_dashboard_accessible": "Must access Ray dashboard at localhost:8265",
+      "prometheus_collecting_metrics": "Must verify Prometheus metrics collection",
+      "kubernetes_cluster_healthy": "Must verify all pods running properly"
+    },
+    "deployment_readiness": {
+      "image_pushed": "Docker image 0.3.0 pushed to registry",
+      "yaml_syntax_valid": "KubeRay YAML passes validation",
+      "services_configured": "All services accessible and working"
+    },
+    "CRITICAL_TO_THIS_PROJECT": {
+      "description": "NEVER use alternative libraries or approaches to simplify. Always use the exact libraries specified in project requirements.",
+      "examples": [
+        "NEVER use generic HTTP clients instead of project's specified libraries",
+        "NEVER use simplified approaches when project has specific implementation requirements",
+        "NEVER replace core dependencies with alternatives without explicit user approval",
+        "NEVER use different model sources than specified in project configuration",
+        "ALWAYS use project-specified libraries even if they seem complex",
+        "ALWAYS follow existing project patterns rather than creating new ones"
+      ],
+      "consequences": "Using alternatives will break integration, cause unexpected behavior, and invalidate testing"
+    }
+  }
+}
